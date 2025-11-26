@@ -1,0 +1,69 @@
+# This workflow is designed to deploy the application to GitHub Pages.
+# It is configured to run only when manually triggered via the GitHub Actions tab.
+
+name: Manual Deploy to GitHub Pages
+
+# Configure the workflow to only run when manually triggered.
+on:
+  workflow_dispatch:
+  # Optional inputs could be added here if needed, e.g., environment or branch name.
+
+# Sets up specific permissions needed for the GitHub Pages deployment process.
+permissions:
+  contents: read # Required to checkout the code
+  pages: write   # Required to deploy to GitHub Pages
+  id-token: write # Required for deployment authentication
+
+# A deployment job to handle the build, artifact creation, and deployment steps.
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      # Use the 'github-pages' environment which is necessary for the final deploy step.
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 1. Node.js Setup and Build Process (Integrated from your CI/CD)
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use the specified Node version
+          cache: 'npm'       # Caches npm dependencies for faster builds
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Production Build
+        # This command is expected to create the deployable files in the 'dist' directory.
+        run: npm run build
+
+      # 2. Setup GitHub Pages
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      # 3. Upload Artifact
+      # The 'dist' folder (created in the previous step) is uploaded as the deployment artifact.
+      - name: Upload GitHub Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # This is the output directory of your 'npm run build' script.
+          path: 'dist'
+
+      # 4. Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      # 5. Comment on Completion
+      # This step posts a comment containing the deployed URL after a successful deployment.
+      - name: Post Deployment URL as Comment
+        if: success()
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: deployment_completed
+          client-payload: '{"page_url": "${{ steps.deployment.outputs.page_url }}", "sha": "${{ github.sha }}"}'
