@@ -57,13 +57,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      # 5. Comment on Completion
-      # This step posts a comment containing the deployed URL after a successful deployment.
-      - name: Post Deployment URL as Comment
-        if: success()
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          event-type: deployment_completed
-          client-payload: '{"page_url": "${{ steps.deployment.outputs.page_url }}", "sha": "${{ github.sha }}"}'
