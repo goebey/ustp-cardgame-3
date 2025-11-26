@@ -4,6 +4,8 @@ on:
   # Trigger the workflow on pushes to the 'main' branch
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   # Allow manual runs from the Actions tab in GitHub
   workflow_dispatch:
 
