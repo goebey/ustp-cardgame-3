@@ -1,0 +1,45 @@
+name: Node.js CI Build
+
+on:
+  # Trigger the workflow on pushes to the 'main' branch
+  push:
+    branches: [ "main" ]
+  # Allow manual runs from the Actions tab in GitHub
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Use a standard Linux runner environment
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code from the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up the Node.js environment
+      # We recommend using a stable, recent version (like 20 or 22)
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Adjust this version if your project requires a different one
+          cache: 'npm'       # Caches npm dependencies for faster builds
+
+      # Step 3: Install all project dependencies
+      - name: Install dependencies
+        # This will install both 'dependencies' and 'devDependencies' from package.json
+        run: npm install
+
+      # Step 4: Run the build script
+      # This executes: "tsc -b --noCheck && vite build"
+      - name: Run Production Build
+        run: npm run build
+
+      # Optional Step: Artifact Upload (If you need to save the build output)
+      # This is crucial if you plan to deploy the build output later.
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          # Assuming Vite builds to a 'dist' directory by default
+          path: dist
