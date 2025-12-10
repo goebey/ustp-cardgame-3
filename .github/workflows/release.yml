@@ -34,7 +34,9 @@ jobs:
         run: npm run build
 
       - name: Zip Release Artifact
-        run: zip -r memory-card-game.zip dist
+        run: |
+          cd dist
+          zip -r ../memory-card-game.zip .
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
