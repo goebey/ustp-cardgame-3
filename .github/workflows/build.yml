@@ -27,6 +27,12 @@ jobs:
           node-version: '20' # Adjust this version if your project requires a different one
           cache: 'npm'       # Caches npm dependencies for faster builds
 
+      - name: Clean up node modules
+        # This forces a clean state, which resolves common issues with platform-specific binaries.
+        run: |
+          rm -rf node_modules
+          rm -f package-lock.json
+
       # Step 3: Install all project dependencies
       - name: Install dependencies
         # This will install both 'dependencies' and 'devDependencies' from package.json
