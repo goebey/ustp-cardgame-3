@@ -34,6 +34,12 @@ jobs:
           node-version: '20' # Use the specified Node version
           cache: 'npm'       # Caches npm dependencies for faster builds
 
+      - name: Clean up node modules
+        # This forces a clean state, which resolves common issues with platform-specific binaries.
+        run: |
+          rm -rf node_modules
+          rm -f package-lock.json
+
       - name: Install dependencies
         run: npm install
 
