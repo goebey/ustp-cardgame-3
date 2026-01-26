@@ -11,18 +11,7 @@ interface MemoryCardProps {
 
 export function MemoryCard({ card, isFlipped, isMatched, onClick, disabled }: MemoryCardProps) {
   const IconComponent = card.icon
-
-  return (
-    <motion.div
-      className="relative aspect-square cursor-pointer"
-      style={{ perspective: '1000px' }}
-      onClick={disabled ? undefined : onClick}
-      whileHover={!disabled && !isFlipped ? { scale: 1.05 } : {}}
-      whileTap={!disabled && !isFlipped ? { scale: 0.95 } : {}}
-    >
-      <motion.div
-        className="relative w-full h-full"
-        style={{ transformStyle: 'preserve-3d' }}
+  style={{ transformStyle: 'preserve-3d' }}
         animate={{ rotateY: isFlipped || isMatched ? 180 : 0 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
       >
